@@ -23,4 +23,13 @@
    ```bash
    npm start
    ```
-5. **Test the API:** Visit `http://localhost:8080/resources`
+5. **Test the API:**
+   Create Resource: POST /resources
+
+List Resources : GET /resources
+
+Get Resource Details: GET /resources/:id
+
+Update Resource: PUT /resources/:id
+
+Delete Resource: DELETE /resources/:id
