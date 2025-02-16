@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../configs/connectDB";
 
-// Khai báo model Major
+// Define model Resource
 export const Resource = sequelize.define("Resource", {
   name: {
     type: DataTypes.STRING,
