@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 require("dotenv").config();
 const jwtAction = require("../middleware/jwtAction");
 //Non-secure path
-const white_list = ["/", "/login"];
+const white_list = ["/", "/login", "/register"];
 interface CustomRequest extends Request {
   user?: { username: string };
 }

@@ -7,6 +7,8 @@ import {
 } from "../types/data";
 import bcrypt from "bcryptjs";
 import { Request } from "express";
+import socket from "../configs/socket";
+import { io } from "../configs/socket";
 interface CustomRequest extends Request {
   user?: { username: string };
 }
@@ -20,7 +22,9 @@ const hashPassword = (password: string) => {
   return hashPassword;
 };
 
-const regisUser = async (data: IRegisUser) => {
+const regisUser = async (
+  data: IRegisUser
+): Promise<IApiResponse<IUser | null>> => {
   const { password, username } = data;
   const result = await User.create({
     username: username,
@@ -29,9 +33,13 @@ const regisUser = async (data: IRegisUser) => {
   const userData = result.get({ plain: true });
 
   return {
-    id: userData.id,
-    username: userData.username,
-    score: userData.score,
+    status: "success",
+    message: "Register successfully!",
+    data: {
+      id: userData.id,
+      username: userData.username,
+      score: userData.score,
+    },
   };
 };
 
@@ -97,6 +105,8 @@ const loginUser = async (
 const listUserScore = async (): Promise<IApiResponse<IUser[] | null>> => {
   const results = await User.findAll({
     attributes: ["id", "username", "score"],
+    order: [["score", "DESC"]],
+    limit: 10,
   });
   if (results && results.length > 0) {
     return {
@@ -145,6 +155,8 @@ const performTaskAndUpdateScore = async (
     );
 
     if (updatedCount > 0) {
+      const updatedScores = await listUserScore();
+      io.emit("allScoresUpdated", updatedScores.data);
       return {
         status: "success",
         message: "Score updated successfully!",
